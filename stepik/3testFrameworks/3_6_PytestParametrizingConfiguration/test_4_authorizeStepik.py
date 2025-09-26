@@ -25,8 +25,9 @@ URLS = [
 @pytest.mark.parametrize("url", URLS)
 def test_authorized_browser(browser, url):
     browser.get(url)
+    # click ENTER button
     WebDriverWait(browser, 10).until(
-        EC.element_to_be_clickable((By.ID, "ember484"))
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.navbar__auth_login"))
     ).click()
 
     #Authorization (login and password input than submit)
@@ -36,10 +37,25 @@ def test_authorized_browser(browser, url):
     browser.find_element(By.ID, "id_login_password").send_keys(PASSWORD)
     browser.find_element(By.XPATH, "//button[@type='submit']").click()
 
-    #click submit
-    browser.find.element(By.CSS_SELECTOR,"button.submit-submission[type='button']").click()
-    answer = math.log(int(time.time()))
-    print(answer)
+    browser.get(url)
+
+    #add answer and click submit
+    answer = str(math.log(int(time.time())))
+    answer_field = WebDriverWait(browser, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "textarea.string-quiz__textarea, .CodeMirror textarea"))
+    )
+    answer_field.clear()
+    answer_field.send_keys(answer)
+
+    WebDriverWait(browser, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "button.submit-submission"))
+    ).click()
+
+    answer_text = WebDriverWait(browser, 10).until(
+        EC.visibility_of_element_located((By.CSS_SELECTOR, ".smart-hints__hint"))
+    ).text.strip()
+
+    assert answer_text == ("Correct!", f"EXPECTED: 'Correct!', ACTUAL: {answer_text!r}")
     time.sleep(3)
 
 
