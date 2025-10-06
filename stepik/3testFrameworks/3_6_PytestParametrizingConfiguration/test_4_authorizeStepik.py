@@ -11,6 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 load_dotenv()
 LOGIN = os.environ["stepik_login"]
 PASSWORD = os.environ["stepik_password"]
+
 URLS = [
     "https://stepik.org/lesson/236895/step/1",
     "https://stepik.org/lesson/236896/step/1",
@@ -34,10 +35,12 @@ def browser():
 @pytest.mark.parametrize("url", URLS)
 def test_authorized_browser(browser, url):
     browser.get(url)
+    time.sleep(1)
 
     # click ENTER button
     WebDriverWait(browser, 7).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.navbar__auth_login"))).click()
 
+    time.sleep(1)
     #Authorization (login and password input than submit)
     WebDriverWait(browser, 7).until(EC.element_to_be_clickable((By.ID, "id_login_email"))).send_keys(LOGIN)
     browser.find_element(By.ID, "id_login_password").send_keys(PASSWORD)
